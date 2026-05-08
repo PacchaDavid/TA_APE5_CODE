@@ -1,0 +1,362 @@
+openapi: 3.0.3
+info:
+  title: TA_APE5 Backend API
+  version: 0.0.1
+  description: API para conversión y minimización de autómatas finitos.
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /api/automata/convert:
+    post:
+      summary: Convertir AFND a AFD
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomatonRequest'
+            examples:
+              nfaWithEpsilon:
+                summary: AFND con epsilon
+                value:
+                  type: AFND
+                  name: EjemploAFND
+                  alphabet: [a, b]
+                  states: [q0, q1, q2]
+                  initialState: q0
+                  acceptingStates: [q2]
+                  transitions:
+                    - from: q0
+                      symbol: epsilon
+                      to: [q1]
+                    - from: q1
+                      symbol: a
+                      to: [q1, q2]
+                    - from: q1
+                      symbol: b
+                      to: [q1]
+                    - from: q2
+                      symbol: b
+                      to: [q2]
+      responses:
+        '200':
+          description: Conversión exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversionResponse'
+        '400':
+          description: Error de validación o de conversión
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /api/automata/minimize:
+    post:
+      summary: Minimizar AFD
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomatonRequest'
+            examples:
+              dfa:
+                summary: AFD determinista
+                value:
+                  type: AFD
+                  name: EjemploAFD
+                  alphabet: ["0", "1"]
+                  states: [A, B, C, D]
+                  initialState: A
+                  acceptingStates: [C, D]
+                  transitions:
+                    - from: A
+                      symbol: "0"
+                      to: [B]
+                    - from: A
+                      symbol: "1"
+                      to: [C]
+                    - from: B
+                      symbol: "0"
+                      to: [A]
+                    - from: B
+                      symbol: "1"
+                      to: [D]
+                    - from: C
+                      symbol: "0"
+                      to: [C]
+                    - from: C
+                      symbol: "1"
+                      to: [C]
+                    - from: D
+                      symbol: "0"
+                      to: [C]
+                    - from: D
+                      symbol: "1"
+                      to: [C]
+      responses:
+        '200':
+          description: Minimización exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MinimizationResponse'
+        '400':
+          description: Error de validación o de minimización
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /api/automata/convert-minimize:
+    post:
+      summary: Convertir AFND a AFD y minimizar
+      description: |
+        Ejecuta el flujo completo AFND -> AFD -> AFD minimizado.
+        Devuelve el AFD minimizado y los pasos de ambos algoritmos (y la tabla de minimización).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomatonRequest'
+            examples:
+              nfa:
+                summary: AFND (entrada)
+                value:
+                  type: AFND
+                  name: EjemploAFND
+                  alphabet: [a, b]
+                  states: [q0, q1, q2]
+                  initialState: q0
+                  acceptingStates: [q2]
+                  transitions:
+                    - from: q0
+                      symbol: epsilon
+                      to: [q1]
+                    - from: q1
+                      symbol: a
+                      to: [q1, q2]
+                    - from: q1
+                      symbol: b
+                      to: [q1]
+                    - from: q2
+                      symbol: b
+                      to: [q2]
+      responses:
+        '200':
+          description: Flujo combinado exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConvertMinimizeResponse'
+        '400':
+          description: Error de validación o de conversión/minimización
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+components:
+  schemas:
+    AutomatonType:
+      type: string
+      enum: [AFD, AFND]
+
+    AutomatonRequest:
+      type: object
+      required: [type, name, alphabet, states, initialState, acceptingStates, transitions]
+      properties:
+        type:
+          $ref: '#/components/schemas/AutomatonType'
+        name:
+          type: string
+          minLength: 1
+        alphabet:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+        states:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+        initialState:
+          type: string
+          minLength: 1
+        acceptingStates:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+        transitions:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/TransitionRequest'
+
+    TransitionRequest:
+      type: object
+      required: [from, symbol, to]
+      properties:
+        from:
+          type: string
+          minLength: 1
+        symbol:
+          type: string
+          minLength: 1
+          description: Para conversión se acepta epsilon: epsilon, eps, ε.
+        to:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+
+    ConversionResponse:
+      type: object
+      required: [automaton, steps]
+      properties:
+        automaton:
+          $ref: '#/components/schemas/AutomatonResponse'
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConversionStep'
+
+    MinimizationResponse:
+      type: object
+      required: [automaton, steps, tableSteps]
+      properties:
+        automaton:
+          $ref: '#/components/schemas/AutomatonResponse'
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConversionStep'
+        tableSteps:
+          type: array
+          items:
+            $ref: '#/components/schemas/MinimizationTableStep'
+
+    ConvertMinimizeResponse:
+      type: object
+      required: [automaton, conversionSteps, minimizationSteps, minimizationTableSteps]
+      properties:
+        automaton:
+          $ref: '#/components/schemas/AutomatonResponse'
+          description: AFD minimizado.
+        conversionSteps:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConversionStep'
+        minimizationSteps:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConversionStep'
+        minimizationTableSteps:
+          type: array
+          items:
+            $ref: '#/components/schemas/MinimizationTableStep'
+
+    AutomatonResponse:
+      type: object
+      required: [name, type, alphabet, states, initialState, acceptingStates, transitions]
+      properties:
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/AutomatonType'
+        alphabet:
+          type: array
+          items:
+            type: string
+        states:
+          type: array
+          items:
+            type: string
+        initialState:
+          type: string
+        acceptingStates:
+          type: array
+          items:
+            type: string
+        transitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransitionResponse'
+
+    TransitionResponse:
+      type: object
+      required: [from, symbol, to]
+      properties:
+        from:
+          type: string
+        symbol:
+          type: string
+        to:
+          type: array
+          items:
+            type: string
+
+    ConversionStep:
+      type: object
+      required: [order, title, detail]
+      properties:
+        order:
+          type: integer
+          format: int32
+        title:
+          type: string
+        detail:
+          type: string
+
+    MinimizationTableStep:
+      type: object
+      required: [iteration, description, cells]
+      properties:
+        iteration:
+          type: integer
+          format: int32
+        description:
+          type: string
+        cells:
+          type: array
+          items:
+            $ref: '#/components/schemas/MinimizationCell'
+
+    MinimizationCell:
+      type: object
+      required: [rowState, columnState, marked, reason]
+      properties:
+        rowState:
+          type: string
+        columnState:
+          type: string
+        marked:
+          type: boolean
+        reason:
+          type: string
+
+    ApiErrorResponse:
+      type: object
+      required: [timestamp, status, error, message]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: string
