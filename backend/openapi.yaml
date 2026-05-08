@@ -2,7 +2,8 @@ openapi: 3.0.3
 info:
   title: TA_APE5 Backend API
   version: 0.0.1
-  description: API para conversión y minimización de autómatas finitos.
+  description: |
+    API para conversión de autómatas finitos.
 
 servers:
   - url: http://localhost:8080
@@ -11,6 +12,8 @@ paths:
   /api/automata/convert:
     post:
       summary: Convertir AFND a AFD
+      description: |
+        Convierte un AFND a un AFD equivalente usando construcción de subconjuntos.
       requestBody:
         required: true
         content:
@@ -173,6 +176,7 @@ components:
       properties:
         type:
           $ref: '#/components/schemas/AutomatonType'
+          description: Debe ser AFND para este endpoint.
         name:
           type: string
           minLength: 1
@@ -213,7 +217,8 @@ components:
         symbol:
           type: string
           minLength: 1
-          description: "Para conversión se acepta epsilon: epsilon, eps, ε."
+          description: |
+            Símbolo del alfabeto, o epsilon. Se acepta: epsilon, eps, ε.
         to:
           type: array
           minItems: 1
@@ -232,41 +237,6 @@ components:
           items:
             $ref: '#/components/schemas/ConversionStep'
 
-    MinimizationResponse:
-      type: object
-      required: [automaton, steps, tableSteps]
-      properties:
-        automaton:
-          $ref: '#/components/schemas/AutomatonResponse'
-        steps:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConversionStep'
-        tableSteps:
-          type: array
-          items:
-            $ref: '#/components/schemas/MinimizationTableStep'
-
-    ConvertMinimizeResponse:
-      type: object
-      required: [automaton, conversionSteps, minimizationSteps, minimizationTableSteps]
-      properties:
-        automaton:
-          $ref: '#/components/schemas/AutomatonResponse'
-          description: AFD minimizado.
-        conversionSteps:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConversionStep'
-        minimizationSteps:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConversionStep'
-        minimizationTableSteps:
-          type: array
-          items:
-            $ref: '#/components/schemas/MinimizationTableStep'
-
     AutomatonResponse:
       type: object
       required: [name, type, alphabet, states, initialState, acceptingStates, transitions]
@@ -283,6 +253,8 @@ components:
           type: array
           items:
             type: string
+          description: |
+            Estados del AFD (p.ej. {q0,q1}) y posible estado sumidero EMPTY_SET.
         initialState:
           type: string
         acceptingStates:
@@ -317,33 +289,6 @@ components:
         title:
           type: string
         detail:
-          type: string
-
-    MinimizationTableStep:
-      type: object
-      required: [iteration, description, cells]
-      properties:
-        iteration:
-          type: integer
-          format: int32
-        description:
-          type: string
-        cells:
-          type: array
-          items:
-            $ref: '#/components/schemas/MinimizationCell'
-
-    MinimizationCell:
-      type: object
-      required: [rowState, columnState, marked, reason]
-      properties:
-        rowState:
-          type: string
-        columnState:
-          type: string
-        marked:
-          type: boolean
-        reason:
           type: string
 
     ApiErrorResponse:
