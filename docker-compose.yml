@@ -1,0 +1,44 @@
+# ========== DOCKER COMPOSE PARA LA INFRAESTRUCTURA DEL PROYECTO ==========
+# Este archivo define los servicios necesarios para ejecutar la aplicación:
+# 1. PostgreSQL: Base de datos para persistir autómatas y transiciones
+
+version: '3.8'
+
+services:
+  # ========== SERVICIO DE PostgreSQL ==========
+  postgres:
+    # Usa la imagen oficial de PostgreSQL versión 16 (alpine = imagen ligera)
+    image: postgres:16-alpine
+    # Nombre del contenedor para referencias en la red interna
+    container_name: ta_ape5_postgres
+    # Variables de entorno para configurar PostgreSQL
+    environment:
+      # Nombre de la base de datos a crear automáticamente
+      POSTGRES_DB: ta_ape5_db
+      # Usuario administrador de PostgreSQL
+      POSTGRES_USER: ta_ape5_user
+      # Contraseña del usuario administrador
+      POSTGRES_PASSWORD: ta_ape5_password
+    # Puerto interno del contenedor: 5432
+    # Puerto externo (host): también 5432
+    ports:
+      - "5432:5432"
+    # Volumen para persistir datos entre reinicios del contenedor
+    volumes:
+      # Almacena los datos de PostgreSQL en un volumen de Docker
+      - postgres_data:/var/lib/postgresql/data
+    # Política de reinicio: reinicia siempre que falle o se detenga
+    restart: unless-stopped
+    # Salud del contenedor: verifica que PostgreSQL esté respondiendo
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ta_ape5_user -d ta_ape5_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# ========== VOLÚMENES ==========
+# Define volúmenes persistentes para almacenar datos
+volumes:
+  # Volumen que persiste los datos de PostgreSQL
+  postgres_data:
+    driver: local
