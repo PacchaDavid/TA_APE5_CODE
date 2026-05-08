@@ -1,0 +1,200 @@
+openapi: 3.0.3
+info:
+  title: TA_APE5 Backend API
+  version: 0.0.1
+  description: |
+    API para conversión de autómatas finitos.
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /api/automata/convert:
+    post:
+      summary: Convertir AFND a AFD
+      description: |
+        Convierte un AFND a un AFD equivalente usando construcción de subconjuntos.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomatonRequest'
+            examples:
+              nfaWithEpsilon:
+                summary: AFND con epsilon
+                value:
+                  type: AFND
+                  name: EjemploAFND
+                  alphabet: [a, b]
+                  states: [q0, q1, q2]
+                  initialState: q0
+                  acceptingStates: [q2]
+                  transitions:
+                    - from: q0
+                      symbol: epsilon
+                      to: [q1]
+                    - from: q1
+                      symbol: a
+                      to: [q1, q2]
+                    - from: q1
+                      symbol: b
+                      to: [q1]
+                    - from: q2
+                      symbol: b
+                      to: [q2]
+      responses:
+        '200':
+          description: Conversión exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversionResponse'
+        '400':
+          description: Error de validación o de conversión
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+components:
+  schemas:
+    AutomatonType:
+      type: string
+      enum: [AFD, AFND]
+
+    AutomatonRequest:
+      type: object
+      required: [type, name, alphabet, states, initialState, acceptingStates, transitions]
+      properties:
+        type:
+          $ref: '#/components/schemas/AutomatonType'
+          description: Debe ser AFND para este endpoint.
+        name:
+          type: string
+          minLength: 1
+        alphabet:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+        states:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+        initialState:
+          type: string
+          minLength: 1
+        acceptingStates:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+        transitions:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/TransitionRequest'
+
+    TransitionRequest:
+      type: object
+      required: [from, symbol, to]
+      properties:
+        from:
+          type: string
+          minLength: 1
+        symbol:
+          type: string
+          minLength: 1
+          description: |
+            Símbolo del alfabeto, o epsilon. Se acepta: epsilon, eps, ε.
+        to:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+
+    ConversionResponse:
+      type: object
+      required: [automaton, steps]
+      properties:
+        automaton:
+          $ref: '#/components/schemas/AutomatonResponse'
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConversionStep'
+
+    AutomatonResponse:
+      type: object
+      required: [name, type, alphabet, states, initialState, acceptingStates, transitions]
+      properties:
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/AutomatonType'
+        alphabet:
+          type: array
+          items:
+            type: string
+        states:
+          type: array
+          items:
+            type: string
+          description: |
+            Estados del AFD (p.ej. {q0,q1}) y posible estado sumidero EMPTY_SET.
+        initialState:
+          type: string
+        acceptingStates:
+          type: array
+          items:
+            type: string
+        transitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransitionResponse'
+
+    TransitionResponse:
+      type: object
+      required: [from, symbol, to]
+      properties:
+        from:
+          type: string
+        symbol:
+          type: string
+        to:
+          type: array
+          items:
+            type: string
+
+    ConversionStep:
+      type: object
+      required: [order, title, detail]
+      properties:
+        order:
+          type: integer
+          format: int32
+        title:
+          type: string
+        detail:
+          type: string
+
+    ApiErrorResponse:
+      type: object
+      required: [timestamp, status, error, message]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: string
