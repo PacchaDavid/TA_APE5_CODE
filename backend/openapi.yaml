@@ -213,7 +213,7 @@ components:
         symbol:
           type: string
           minLength: 1
-          description: Para conversión se acepta epsilon: epsilon, eps, ε.
+          description: "Para conversión se acepta epsilon: epsilon, eps, ε."
         to:
           type: array
           minItems: 1
