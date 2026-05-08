@@ -19,7 +19,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AutomatonRequest'
+              allOf:
+                - $ref: '#/components/schemas/AutomatonRequest'
+                - type: object
+                  properties:
+                    type:
+                      type: string
+                      enum: [AFND]
+                  required: [type]
             examples:
               nfaWithEpsilon:
                 summary: AFND con epsilon
@@ -60,12 +67,21 @@ paths:
   /api/automata/minimize:
     post:
       summary: Minimizar AFD
+      description: |
+        Minimiza un AFD usando el algoritmo de marcación (tabla de equivalencias).
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AutomatonRequest'
+              allOf:
+                - $ref: '#/components/schemas/AutomatonRequest'
+                - type: object
+                  properties:
+                    type:
+                      type: string
+                      enum: [AFD]
+                  required: [type]
             examples:
               dfa:
                 summary: AFD determinista
@@ -126,7 +142,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AutomatonRequest'
+              allOf:
+                - $ref: '#/components/schemas/AutomatonRequest'
+                - type: object
+                  properties:
+                    type:
+                      type: string
+                      enum: [AFND]
+                  required: [type]
             examples:
               nfa:
                 summary: AFND (entrada)
@@ -176,7 +199,7 @@ components:
       properties:
         type:
           $ref: '#/components/schemas/AutomatonType'
-          description: Debe ser AFND para este endpoint.
+          description: Tipo de autómata. Debe coincidir con el endpoint (AFND o AFD).
         name:
           type: string
           minLength: 1
@@ -305,3 +328,67 @@ components:
           type: string
         message:
           type: string
+
+    MinimizationCell:
+      type: object
+      required: [rowState, columnState, marked, reason]
+      properties:
+        rowState:
+          type: string
+          minLength: 1
+        columnState:
+          type: string
+          minLength: 1
+        marked:
+          type: boolean
+        reason:
+          type: string
+
+    MinimizationTableStep:
+      type: object
+      required: [iteration, description, cells]
+      properties:
+        iteration:
+          type: integer
+          format: int32
+          minimum: 0
+        description:
+          type: string
+        cells:
+          type: array
+          items:
+            $ref: '#/components/schemas/MinimizationCell'
+
+    MinimizationResponse:
+      type: object
+      required: [automaton, steps, tableSteps]
+      properties:
+        automaton:
+          $ref: '#/components/schemas/AutomatonResponse'
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConversionStep'
+        tableSteps:
+          type: array
+          items:
+            $ref: '#/components/schemas/MinimizationTableStep'
+
+    ConvertMinimizeResponse:
+      type: object
+      required: [automaton, conversionSteps, minimizationSteps, minimizationTableSteps]
+      properties:
+        automaton:
+          $ref: '#/components/schemas/AutomatonResponse'
+        conversionSteps:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConversionStep'
+        minimizationSteps:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConversionStep'
+        minimizationTableSteps:
+          type: array
+          items:
+            $ref: '#/components/schemas/MinimizationTableStep'
