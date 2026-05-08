@@ -1,0 +1,75 @@
+# ========== JAVA Y MAVEN ==========
+*.class
+*.jar
+*.war
+*.nar
+target/
+.mvn/wrapper/maven-wrapper.jar
+.classpath
+.project
+
+# ========== IDE: IntelliJ IDEA ==========
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# ========== IDE: Eclipse ==========
+.settings/
+.apt_generated
+.factorypath
+.springBeans
+.sts4-cache
+
+# ========== IDE: NetBeans ==========
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+# ========== IDE: VS Code ==========
+.vscode/
+*.code-workspace
+
+# ========== EDITORES ==========
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ========== DOCKER ==========
+postgres_data/
+
+# ========== BASE DE DATOS ==========
+*.db
+*.sqlite
+*.sqlite3
+*.h2.db
+
+# ========== LOGS ==========
+logs/
+*.log
+*.log.*
+
+# ========== CONFIGURACIÓN SENSIBLE ==========
+.env
+.env.local
+.env.*.local
+
+# ========== SISTEMA OPERATIVO ==========
+Thumbs.db
+*.tmp
+*.bak
+
+# ========== NODE (si hay frontend) ==========
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# ========== OTROS ==========
+*.orig
+.gradle/
+*.patch
+HELP.md
