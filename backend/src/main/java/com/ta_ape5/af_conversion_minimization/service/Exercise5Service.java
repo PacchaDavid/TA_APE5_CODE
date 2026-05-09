@@ -4,27 +4,27 @@ import com.ta_ape5.af_conversion_minimization.model.AutomataTestResult;
 import com.ta_ape5.af_conversion_minimization.model.AutomataType;
 import com.ta_ape5.af_conversion_minimization.model.AutomatonDefinition;
 import com.ta_ape5.af_conversion_minimization.model.SimulationResult;
-import com.ta_ape5.af_conversion_minimization.model.SimulationStep;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
+/**
+ * Ejercicio 5: validacion de paquete IoT (HDR -> (TEMP|HUM)* -> CRC).
+ */
 @Service
 public class Exercise5Service implements AutomataService {
 
     private static final int EXERCISE_ID = 5;
 
+    /** Estados del AFND. */
     private static final List<String> AFND_STATES = List.of("q0", "q1", "q2");
-    private static final List<String> AFD_STATES = List.of("{q0}", "{q1}", "{q2}", "∅");
+    /** Simbolos de entrada: h=HDR, t=TEMP, m=HUM, c=CRC. */
     private static final List<String> ALPHABET = List.of("h", "t", "m", "c");
 
+    /** Tabla de transiciones del AFND. */
     private static final Map<String, Map<String, List<String>>> AFND_TRANSITIONS = Map.of(
             "q0", Map.of(
                     "h", List.of("q1")
@@ -37,33 +37,38 @@ public class Exercise5Service implements AutomataService {
             "q2", Map.of()
     );
 
-    private static final Map<String, Map<String, String>> AFD_TRANSITIONS = Map.of(
-            "{q0}", Map.of(
-                    "h", "{q1}",
-                    "t", "∅",
-                    "m", "∅",
-                    "c", "∅"
-            ),
-            "{q1}", Map.of(
-                    "h", "∅",
-                    "t", "{q1}",
-                    "m", "{q1}",
-                    "c", "{q2}"
-            ),
-            "{q2}", Map.of(
-                    "h", "∅",
-                    "t", "∅",
-                    "m", "∅",
-                    "c", "∅"
-            ),
-            "∅", Map.of(
-                    "h", "∅",
-                    "t", "∅",
-                    "m", "∅",
-                    "c", "∅"
-            )
+    private static final AutomatonDefinition AFND_DEFINITION = new AutomatonDefinition(
+            EXERCISE_ID,
+            "Ejercicio 5 - AFND",
+            AutomataType.AFND,
+            AFND_STATES,
+            ALPHABET,
+            "q0",
+            List.of("q2"),
+            AFND_TRANSITIONS
     );
 
+    private static final AutomataAlgorithms.DeterministicAutomaton AFD_AUTOMATON =
+            AutomataAlgorithms.afndToAfd(AFND_DEFINITION);
+
+    private static final AutomataAlgorithms.DeterministicAutomaton AFD_MIN_AUTOMATON =
+            AutomataAlgorithms.minimizeAfd(AFD_AUTOMATON);
+
+    private static final AutomatonDefinition AFD_DEFINITION = AutomataAlgorithms.toDefinition(
+            AFD_AUTOMATON,
+            EXERCISE_ID,
+            "Ejercicio 5 - AFD",
+            AutomataType.AFD
+    );
+
+    private static final AutomatonDefinition AFD_MIN_DEFINITION = AutomataAlgorithms.toDefinition(
+            AFD_MIN_AUTOMATON,
+            EXERCISE_ID,
+            "Ejercicio 5 - AFD Minimizado",
+            AutomataType.AFD_MIN
+    );
+
+    /** Conjunto fijo de entradas usado en la tabla de comparacion. */
     private static final List<String> TEST_INPUTS = List.of(
             "",
             "h",
@@ -87,28 +92,34 @@ public class Exercise5Service implements AutomataService {
             "htmtmtmtc"
     );
 
+    /** {@inheritDoc} */
     @Override
     public int exerciseId() {
         return EXERCISE_ID;
     }
 
+    /** {@inheritDoc} */
     @Override
     public SimulationResult simulate(AutomataType automataType, String input) {
+        String safeInput = input == null ? "" : input;
         return switch (automataType) {
-            case AFND -> simulateAfnd(input == null ? "" : input);
-            case AFD, AFD_MIN -> simulateDeterministic(input == null ? "" : input, "{q0}", AFD_TRANSITIONS, Set.of("{q2}"));
+            case AFND -> AutomataAlgorithms.simulateAfnd(AFND_DEFINITION, safeInput);
+            case AFD -> AutomataAlgorithms.simulateAfd(AFD_AUTOMATON, safeInput);
+            case AFD_MIN -> AutomataAlgorithms.simulateAfd(AFD_MIN_AUTOMATON, safeInput);
         };
     }
 
+    /** {@inheritDoc} */
     @Override
     public AutomatonDefinition definition(AutomataType automataType) {
         return switch (automataType) {
-            case AFND -> new AutomatonDefinition(EXERCISE_ID, "Ejercicio 5 - AFND", automataType, AFND_STATES, ALPHABET, "q0", List.of("q2"), AFND_TRANSITIONS);
-            case AFD -> new AutomatonDefinition(EXERCISE_ID, "Ejercicio 5 - AFD", automataType, AFD_STATES, ALPHABET, "{q0}", List.of("{q2}"), toListTransitionMap(AFD_TRANSITIONS));
-            case AFD_MIN -> new AutomatonDefinition(EXERCISE_ID, "Ejercicio 5 - AFD Minimizado", automataType, AFD_STATES, ALPHABET, "{q0}", List.of("{q2}"), toListTransitionMap(AFD_TRANSITIONS));
+            case AFND -> AFND_DEFINITION;
+            case AFD -> AFD_DEFINITION;
+            case AFD_MIN -> AFD_MIN_DEFINITION;
         };
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<AutomataTestResult> testResults() {
         List<AutomataTestResult> results = new ArrayList<>();
@@ -130,60 +141,4 @@ public class Exercise5Service implements AutomataService {
         return results;
     }
 
-    private SimulationResult simulateAfnd(String input) {
-        Set<String> currentStates = new TreeSet<>(Collections.singleton("q0"));
-        List<SimulationStep> steps = new ArrayList<>();
-
-        for (char symbol : input.toCharArray()) {
-            Set<String> nextStates = new TreeSet<>();
-            for (String currentState : currentStates) {
-                nextStates.addAll(AFND_TRANSITIONS.getOrDefault(currentState, Map.of())
-                        .getOrDefault(String.valueOf(symbol), List.of()));
-            }
-            steps.add(new SimulationStep(String.valueOf(symbol), formatStateSet(currentStates), formatStateSet(nextStates)));
-            currentStates = nextStates;
-        }
-
-        boolean accepted = currentStates.contains("q2");
-        return new SimulationResult(accepted, steps, formatStateSet(currentStates), accepted);
-    }
-
-    private SimulationResult simulateDeterministic(
-            String input,
-            String initialState,
-            Map<String, Map<String, String>> transitions,
-            Set<String> acceptingStates
-    ) {
-        String currentState = initialState;
-        List<SimulationStep> steps = new ArrayList<>();
-
-        for (char symbol : input.toCharArray()) {
-            String nextState = transitions.getOrDefault(currentState, Map.of())
-                    .getOrDefault(String.valueOf(symbol), "∅");
-            steps.add(new SimulationStep(String.valueOf(symbol), currentState, nextState));
-            currentState = nextState;
-        }
-
-        boolean accepted = acceptingStates.contains(currentState);
-        return new SimulationResult(accepted, steps, currentState, accepted);
-    }
-
-    private Map<String, Map<String, List<String>>> toListTransitionMap(Map<String, Map<String, String>> transitions) {
-        Map<String, Map<String, List<String>>> converted = new LinkedHashMap<>();
-        for (Map.Entry<String, Map<String, String>> stateEntry : transitions.entrySet()) {
-            Map<String, List<String>> stateTransitions = new LinkedHashMap<>();
-            for (Map.Entry<String, String> transitionEntry : stateEntry.getValue().entrySet()) {
-                stateTransitions.put(transitionEntry.getKey(), List.of(transitionEntry.getValue()));
-            }
-            converted.put(stateEntry.getKey(), stateTransitions);
-        }
-        return converted;
-    }
-
-    private String formatStateSet(Set<String> states) {
-        if (states.isEmpty()) {
-            return "∅";
-        }
-        return "{" + String.join(",", states) + "}";
-    }
 }

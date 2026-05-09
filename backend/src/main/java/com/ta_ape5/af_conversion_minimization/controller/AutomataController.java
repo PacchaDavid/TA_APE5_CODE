@@ -19,6 +19,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+/**
+ * Controlador REST que expone definiciones, simulaciones y datos de prueba.
+ */
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/automata")
@@ -26,16 +29,25 @@ public class AutomataController {
 
     private final List<AutomataService> automataServices;
 
+    /**
+     * Inyecta los servicios de ejercicios para despachar por id de ejercicio.
+     */
     public AutomataController(List<AutomataService> automataServices) {
         this.automataServices = automataServices;
     }
 
+    /**
+     * Simula una cadena sobre el tipo de automata solicitado.
+     */
     @PostMapping("/simulate")
     public SimulationResult simulate(@RequestBody AutomataRequest request) {
         AutomataService service = findService(request.exerciseId());
         return service.simulate(request.automataType(), request.input());
     }
 
+    /**
+     * Retorna la definicion formal para un ejercicio y tipo de automata.
+     */
     @GetMapping("/definition/{exerciseId}")
     public AutomatonDefinition definition(
             @PathVariable int exerciseId,
@@ -45,12 +57,18 @@ public class AutomataController {
         return service.definition(automataType);
     }
 
+    /**
+     * Retorna el conjunto fijo de pruebas para comparar AFND/AFD/AFD_MIN.
+     */
     @GetMapping("/test/{exerciseId}")
     public List<AutomataTestResult> testResults(@PathVariable int exerciseId) {
         AutomataService service = findService(exerciseId);
         return service.testResults();
     }
 
+    /**
+     * Ubica el servicio que implementa un id de ejercicio especifico.
+     */
     private AutomataService findService(int exerciseId) {
         return automataServices.stream()
                 .filter(service -> service.exerciseId() == exerciseId)
