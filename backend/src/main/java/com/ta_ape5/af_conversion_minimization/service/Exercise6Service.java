@@ -13,19 +13,21 @@ import java.util.Map;
 
 /**
  * Ejercicio 6: reconocimiento de subsecuencia genetica (K -> G -> ... -> F).
+ * Permite simbolos de relleno entre los marcadores esperados.
  */
 @Service
 public class Exercise6Service implements AutomataService {
 
+    /** Identificador del ejercicio. */
     private static final int EXERCISE_ID = 6;
 
-        /** Estados del AFND. */
-        private static final List<String> AFND_STATES = List.of("q0", "q1", "q2", "q3");
-        /** Simbolos de entrada: k, g, f, x. */
-        private static final List<String> ALPHABET = List.of("k", "g", "f", "x");
+    /** Estados del AFND. */
+    private static final List<String> AFND_STATES = List.of("q0", "q1", "q2", "q3");
+    /** Simbolos de entrada: k, g, f, x. */
+    private static final List<String> ALPHABET = List.of("k", "g", "f", "x");
 
-        /** Tabla de transiciones del AFND. */
-        private static final Map<String, Map<String, List<String>>> AFND_TRANSITIONS = Map.of(
+    /** Tabla de transiciones del AFND. */
+    private static final Map<String, Map<String, List<String>>> AFND_TRANSITIONS = Map.of(
             "q0", Map.of(
                 "k", List.of("q0", "q1"),
                 "g", List.of("q0"),
@@ -44,7 +46,7 @@ public class Exercise6Service implements AutomataService {
             "q3", Map.of()
         );
 
-        private static final AutomatonDefinition AFND_DEFINITION = new AutomatonDefinition(
+    private static final AutomatonDefinition AFND_DEFINITION = new AutomatonDefinition(
             EXERCISE_ID,
             "Ejercicio 6 - AFND",
             AutomataType.AFND,
@@ -55,28 +57,28 @@ public class Exercise6Service implements AutomataService {
             AFND_TRANSITIONS
         );
 
-        private static final AutomataAlgorithms.DeterministicAutomaton AFD_AUTOMATON =
+    private static final AutomataAlgorithms.DeterministicAutomaton AFD_AUTOMATON =
             AutomataAlgorithms.afndToAfd(AFND_DEFINITION);
 
-        private static final AutomataAlgorithms.DeterministicAutomaton AFD_MIN_AUTOMATON =
+    private static final AutomataAlgorithms.DeterministicAutomaton AFD_MIN_AUTOMATON =
             AutomataAlgorithms.minimizeAfd(AFD_AUTOMATON);
 
-        private static final AutomatonDefinition AFD_DEFINITION = AutomataAlgorithms.toDefinition(
+    private static final AutomatonDefinition AFD_DEFINITION = AutomataAlgorithms.toDefinition(
             AFD_AUTOMATON,
             EXERCISE_ID,
             "Ejercicio 6 - AFD",
             AutomataType.AFD
         );
 
-        private static final AutomatonDefinition AFD_MIN_DEFINITION = AutomataAlgorithms.toDefinition(
+    private static final AutomatonDefinition AFD_MIN_DEFINITION = AutomataAlgorithms.toDefinition(
             AFD_MIN_AUTOMATON,
             EXERCISE_ID,
             "Ejercicio 6 - AFD Minimizado",
             AutomataType.AFD_MIN
         );
 
-        /** Conjunto fijo de entradas usado en la tabla de comparacion. */
-        private static final List<String> TEST_INPUTS = List.of(
+    /** Conjunto fijo de entradas usado en la tabla de comparacion. */
+    private static final List<String> TEST_INPUTS = List.of(
             "",
             "kgf",
             "kgxf",

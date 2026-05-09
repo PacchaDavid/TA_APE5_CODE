@@ -13,18 +13,20 @@ import java.util.Map;
 
 /**
  * Ejercicio 4: deteccion de patron de ataque SYN flood.
+ * Modela un flujo de eventos de red y valida secuencias sospechosas.
  */
 @Service
 public class Exercise4Service implements AutomataService {
 
+        /** Identificador del ejercicio. */
     private static final int EXERCISE_ID = 4;
 
-        /** Conjunto base de estados del AFND. */
+    /** Conjunto base de estados del AFND. */
     private static final List<String> STATES = List.of("q0", "q1", "q2", "q3", "qE");
-        /** Simbolos de entrada: s=SYN, a=ACK, r=RST, o=other. */
+    /** Simbolos de entrada: s=SYN, a=ACK, r=RST, o=other. */
     private static final List<String> ALPHABET = List.of("s", "a", "r", "o");
 
-        /** Tabla de transiciones del AFND. */
+    /** Tabla de transiciones del AFND. */
     private static final Map<String, Map<String, List<String>>> AFND_TRANSITIONS = Map.of(
             "q0", Map.of(
                     "s", List.of("q0", "q1"),
@@ -76,7 +78,7 @@ public class Exercise4Service implements AutomataService {
             AutomataType.AFD_MIN
     );
 
-        /** Conjunto fijo de entradas usado en la tabla de comparacion. */
+    /** Conjunto fijo de entradas usado en la tabla de comparacion. */
     private static final List<String> TEST_INPUTS = List.of(
             "",
             "s",

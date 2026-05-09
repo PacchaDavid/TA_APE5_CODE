@@ -13,10 +13,12 @@ import java.util.Map;
 
 /**
  * Ejercicio 5: validacion de paquete IoT (HDR -> (TEMP|HUM)* -> CRC).
+ * El AFND admite multiples lecturas de sensores antes del cierre con CRC.
  */
 @Service
 public class Exercise5Service implements AutomataService {
 
+        /** Identificador del ejercicio. */
     private static final int EXERCISE_ID = 5;
 
     /** Estados del AFND. */

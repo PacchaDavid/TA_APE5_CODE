@@ -17,8 +17,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * Algoritmos de conversion y minimizacion para automatas finitos.
- * Implementa conversion AFND->AFD (subconjuntos) y minimizacion por tabla.
+ * Algoritmos de conversion, simulacion y minimizacion para automatas finitos.
+ * Centraliza la conversion AFND->AFD (construccion de subconjuntos),
+ * minimizacion de AFD (tabla de distincion) y adaptadores de definicion.
  */
 public final class AutomataAlgorithms {
 
@@ -28,10 +29,11 @@ public final class AutomataAlgorithms {
     private AutomataAlgorithms() {
     }
 
-        /**
-         * Estructura inmutable para representar un AFD y sus metadatos.
-         */
-        public record DeterministicAutomaton(
+    /**
+     * Estructura inmutable para representar un AFD y sus metadatos.
+     * Las transiciones son deterministas y se indexan por estado y simbolo.
+     */
+    public record DeterministicAutomaton(
             List<String> states,
             List<String> alphabet,
             String initialState,
@@ -42,6 +44,7 @@ public final class AutomataAlgorithms {
 
     /**
      * Convierte un AFND a un AFD mediante construccion de subconjuntos.
+     * Genera solo los superestados alcanzables desde el estado inicial.
      */
     public static DeterministicAutomaton afndToAfd(AutomatonDefinition afnd) {
         Set<String> alphabet = new LinkedHashSet<>(afnd.alphabet());
@@ -128,6 +131,7 @@ public final class AutomataAlgorithms {
 
     /**
      * Minimiza un AFD por el metodo de tabla de distincion.
+     * Considera solo estados alcanzables para evitar clases inutiles.
      */
     public static DeterministicAutomaton minimizeAfd(DeterministicAutomaton afd) {
         List<String> alphabet = afd.alphabet();
@@ -249,6 +253,7 @@ public final class AutomataAlgorithms {
 
     /**
      * Convierte un AFD a la definicion usada por la UI.
+     * Adaptando las transiciones deterministas a listas unitarias.
      */
     public static AutomatonDefinition toDefinition(
             DeterministicAutomaton afd,
@@ -270,6 +275,7 @@ public final class AutomataAlgorithms {
 
     /**
      * Simula un AFND manteniendo el conjunto actual de estados.
+     * Cada simbolo actualiza el conjunto con la union de destinos.
      */
     public static SimulationResult simulateAfnd(AutomatonDefinition afnd, String input) {
         Set<String> currentStates = new TreeSet<>(Set.of(afnd.initialState()));
@@ -293,6 +299,7 @@ public final class AutomataAlgorithms {
 
     /**
      * Simula un AFD recorriendo transiciones deterministas.
+     * Si falta transicion explicita, se conserva el estado actual.
      */
     public static SimulationResult simulateAfd(DeterministicAutomaton afd, String input) {
         String currentState = afd.initialState();
