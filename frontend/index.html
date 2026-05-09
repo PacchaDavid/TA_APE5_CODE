@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APE 5 - Autómatas Finitos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- <header class="hero">
+      <div>
+        <p class="eyebrow">Teoría de Autómatas y Computabilidad Avanzada</p>
+        <h1>Autómatas Finitos: AFND, AFD y minimización</h1>
+        <p class="hero-copy">Tres ejercicios completos, simulación en vivo, tabla de equivalencia y visualización SVG sin frameworks.</p>
+      </div>
+      <div class="hero-badge">
+        <span>Backend</span>
+        <strong>Spring Boot REST</strong>
+      </div>
+    </header> -->
+
+    <main class="layout">
+      <section class="exercise-panel">
+        <div class="exercise-tabs" id="exerciseTabs" role="tablist" aria-label="Ejercicios"></div>
+
+        <section class="card help-card">
+          <div class="card-header">
+            <div>
+              <p class="card-kicker">Ayuda rápida</p>
+              <h2>Cómo usar la interfaz</h2>
+            </div>
+          </div>
+          <div id="exerciseHelp" class="help-text"></div>
+          <div id="exampleChips" class="example-chips" aria-label="Ejemplos sugeridos"></div>
+        </section>
+
+        <section class="card definition-card">
+          <div class="card-header">
+            <div>
+              <p class="card-kicker">Definición formal</p>
+              <h2 id="exerciseTitle">Cargando ejercicio...</h2>
+            </div>
+            <div class="selector-group">
+              <label for="automataType">Autómata</label>
+              <select id="automataType">
+                <option value="AFND">AFND</option>
+                <option value="AFD">AFD</option>
+                <option value="AFD_MIN">AFD minimizado</option>
+              </select>
+              <small class="field-hint">Cambia este selector para ver la tabla, el diagrama y la simulación del mismo ejercicio en otra versión.</small>
+            </div>
+          </div>
+          <div id="definitionInfo" class="definition-info"></div>
+          <div id="definitionTable" class="table-wrap"></div>
+        </section>
+
+        <section class="card diagram-card">
+          <div class="card-header">
+            <div>
+              <p class="card-kicker">Diagrama</p>
+              <h2>Visualización del autómata</h2>
+            </div>
+            <button id="refreshDiagram" class="ghost-button" type="button">Redibujar</button>
+          </div>
+          <div id="diagramContainer" class="diagram-container"></div>
+          <div id="diagramLegend" class="diagram-legend"></div>
+        </section>
+      </section>
+
+      <aside class="simulation-panel">
+        <section class="card simulation-card">
+          <div class="card-header">
+            <div>
+              <p class="card-kicker">Simulación</p>
+              <h2>Probar una cadena</h2>
+            </div>
+            <div id="colorGuide" class="color-guide"></div>
+          </div>
+          <form id="simulationForm" class="simulation-form">
+            <label for="inputString">Cadena de entrada</label>
+            <input id="inputString" name="inputString" type="text" placeholder="Escribe la cadena aquí" autocomplete="off" />
+            <small class="field-hint">Escribe una cadena del alfabeto del ejercicio actual. Usa los ejemplos sugeridos si quieres validar rápido.</small>
+            <button type="submit">Simular</button>
+          </form>
+          <div id="simulationStatus" class="simulation-status">Esperando una cadena.</div>
+          <div id="simulationResults" class="simulation-results"></div>
+        </section>
+
+        <section class="card tests-card">
+          <div class="card-header">
+            <div>
+              <p class="card-kicker">Verificación</p>
+              <h2>20 cadenas de prueba</h2>
+            </div>
+            <button id="reloadTests" class="ghost-button" type="button">Actualizar</button>
+          </div>
+          <div id="testTable" class="table-wrap compact"></div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
