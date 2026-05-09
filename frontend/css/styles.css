@@ -46,9 +46,10 @@ body::before {
 }
 
 .app-shell {
-  width: min(1500px, calc(100% - 32px));
+  width: min(1500px, 100% - 32px);
   margin: 0 auto;
-  padding: 28px 0 40px;
+  padding: 28px 16px 40px;
+  max-width: 100%;
 }
 
 .hero {
@@ -109,6 +110,7 @@ body::before {
   grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.85fr);
   gap: 22px;
   align-items: start;
+  width: 100%;
 }
 
 .exercise-panel,
@@ -529,8 +531,8 @@ input:focus {
 
 @media (max-width: 1440px) {
   .app-shell {
-    width: min(100% - 24px, 1380px);
-    padding: 20px 0 28px;
+    width: calc(100% - 24px);
+    padding: 20px 12px 28px;
   }
 
   .hero {
@@ -539,7 +541,7 @@ input:focus {
   }
 
   .hero h1 {
-    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-size: clamp(1.8rem, 4vw, 3.5rem);
   }
 
   .hero-copy {
@@ -596,36 +598,640 @@ input:focus {
   }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1200px) {
+  .app-shell {
+    width: calc(100% - 20px);
+  }
+
+  .layout {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .exercise-panel,
+  .simulation-panel {
+    gap: 14px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .selector-group {
+    min-width: 100%;
+  }
+
+  .diagram-container {
+    min-height: 380px;
+  }
+
+  .definition-info {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+  }
+
+  .exercise-tabs {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 1024px) {
+  html {
+    font-size: 15px;
+  }
+
+  .app-shell {
+    width: calc(100% - 20px);
+    padding: 18px 10px 32px;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.6rem, 3.5vw, 3rem);
+  }
+
   .layout {
     grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .table-wrap table {
+    min-width: 560px;
+  }
+
+  .table-wrap.compact table {
+    min-width: 420px;
+  }
+
+  .diagram-container {
+    min-height: 340px;
+  }
+
+  .color-guide {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card-header {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+
+  .app-shell {
+    width: calc(100% - 16px);
+    padding: 16px 8px 28px;
   }
 
   .hero {
     flex-direction: column;
     align-items: start;
+    gap: 14px;
   }
-}
 
-@media (max-width: 720px) {
-  .app-shell {
-    width: min(100% - 20px, 100%);
+  .hero h1 {
+    font-size: clamp(1.4rem, 5vw, 2.4rem);
+    max-width: 100%;
+  }
+
+  .hero-copy {
+    margin-top: 8px;
+    max-width: 100%;
+  }
+
+  .hero-badge {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .layout {
+    gap: 12px;
+  }
+
+  .exercise-panel,
+  .simulation-panel {
+    gap: 12px;
   }
 
   .card {
-    padding: 18px;
+    padding: 12px;
+    border-radius: 16px;
   }
 
   .card-header {
     flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .card h2 {
+    font-size: 1rem;
+  }
+
+  .card-kicker {
+    font-size: 0.65rem;
+    margin-bottom: 6px;
+  }
+
+  .exercise-tabs {
+    gap: 6px;
+  }
+
+  .exercise-tab {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+
+  .selector-group {
+    min-width: 100%;
+    width: 100%;
+  }
+
+  .definition-info {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .info-pill {
+    padding: 10px 12px;
+    border-radius: 12px;
+  }
+
+  .info-pill span {
+    font-size: 0.68rem;
+    margin-bottom: 4px;
+  }
+
+  .info-pill strong {
+    font-size: 0.88rem;
+  }
+
+  .help-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .example-chips {
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .example-chip {
+    padding: 7px 10px;
+    font-size: 0.8rem;
+  }
+
+  .field-hint {
+    font-size: 0.75rem;
   }
 
   .color-guide {
+    flex-direction: row;
+    gap: 6px;
+    flex-wrap: wrap;
     justify-content: flex-start;
   }
 
-  .simulation-form button,
-  .ghost-button {
+  .guide-tag {
+    padding: 6px 8px;
+    font-size: 0.7rem;
+  }
+
+  .table-wrap {
+    border-radius: 12px;
+  }
+
+  .table-wrap table {
+    min-width: 480px;
+    font-size: 0.9rem;
+  }
+
+  .table-wrap.compact table {
+    min-width: 380px;
+  }
+
+  .table-wrap th,
+  .table-wrap td {
+    padding: 10px 10px;
+    font-size: 0.88rem;
+  }
+
+  .table-wrap th {
+    font-size: 0.7rem;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 5px 8px;
+    gap: 6px;
+  }
+
+  .ghost-button,
+  .simulation-form button {
     width: 100%;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .simulation-form {
+    gap: 8px;
+  }
+
+  .simulation-form label {
+    font-size: 0.8rem;
+  }
+
+  .simulation-form input {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    margin-bottom: 0px;
+  }
+
+  .simulation-status {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+  }
+
+  .result-card {
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .result-card h3 {
+    font-size: 0.95rem;
+  }
+
+  .result-state {
+    font-size: 0.85rem;
+  }
+
+  .step-list {
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .step-item {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    border-radius: 10px;
+  }
+
+  .diagram-container {
+    min-height: 300px;
+    border-radius: 12px;
+  }
+
+  .diagram-legend {
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .legend-item {
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    gap: 6px;
+  }
+
+  .legend-swatch {
+    width: 10px;
+    height: 10px;
+  }
+
+  select,
+  input {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    border-radius: 10px;
+  }
+
+  select {
+    background-position:
+      calc(100% - 16px) calc(50% - 2px),
+      calc(100% - 10px) calc(50% - 2px);
+    background-size: 5px 5px, 5px 5px;
+    padding-right: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 13px;
+  }
+
+  .app-shell {
+    width: calc(100% - 12px);
+    padding: 12px 6px 20px;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.2rem, 6vw, 2rem);
+  }
+
+  .hero-copy {
+    font-size: 0.85rem;
+  }
+
+  .hero-badge {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+  }
+
+  .hero-badge span {
+    font-size: 0.7rem;
+  }
+
+  .hero-badge strong {
+    font-size: 0.9rem;
+    margin-top: 2px;
+  }
+
+  .layout {
+    gap: 10px;
+  }
+
+  .exercise-panel,
+  .simulation-panel {
+    gap: 10px;
+  }
+
+  .card {
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .card-header {
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .card h2 {
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .card-kicker {
+    font-size: 0.6rem;
+    margin-bottom: 4px;
+  }
+
+  .eyebrow {
+    font-size: 0.6rem;
+  }
+
+  .exercise-tabs {
+    gap: 4px;
+  }
+
+  .exercise-tab {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    border-radius: 8px;
+  }
+
+  .definition-info {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .info-pill {
+    padding: 8px 10px;
+    border-radius: 10px;
+  }
+
+  .info-pill span {
+    font-size: 0.6rem;
+    margin-bottom: 3px;
+  }
+
+  .info-pill strong {
+    font-size: 0.8rem;
+  }
+
+  .help-text {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .example-chips {
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .example-chip {
+    padding: 5px 8px;
+    font-size: 0.75rem;
+  }
+
+  .field-hint {
+    font-size: 0.7rem;
+    line-height: 1.3;
+  }
+
+  .color-guide {
+    gap: 4px;
+  }
+
+  .guide-tag {
+    padding: 4px 6px;
+    font-size: 0.65rem;
+  }
+
+  .guide-dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .table-wrap {
+    border-radius: 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-wrap table {
+    min-width: 420px;
+    font-size: 0.8rem;
+  }
+
+  .table-wrap.compact table {
+    min-width: 340px;
+  }
+
+  .table-wrap th,
+  .table-wrap td {
+    padding: 8px 8px;
+    font-size: 0.8rem;
+  }
+
+  .table-wrap th {
+    font-size: 0.65rem;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 4px 6px;
+    gap: 4px;
+  }
+
+  .badge .dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  select,
+  input {
+    padding: 9px 10px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+
+  select {
+    background-position:
+      calc(100% - 14px) calc(50% - 1px),
+      calc(100% - 8px) calc(50% - 1px);
+    background-size: 4px 4px, 4px 4px;
+    padding-right: 32px;
+  }
+
+  .ghost-button,
+  .simulation-form button {
+    padding: 9px 10px;
+    font-size: 0.85rem;
+  }
+
+  .simulation-form {
+    gap: 6px;
+  }
+
+  .simulation-form label {
+    font-size: 0.75rem;
+  }
+
+  .simulation-form input {
+    padding: 9px 10px;
+  }
+
+  .simulation-status {
+    margin-top: 8px;
+    padding: 8px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+  }
+
+  .status-note {
+    font-size: 0.8rem;
+  }
+
+  .result-card {
+    padding: 8px;
+    border-radius: 10px;
+  }
+
+  .result-card header {
+    gap: 6px;
+  }
+
+  .result-card h3 {
+    font-size: 0.9rem;
+  }
+
+  .result-state {
+    font-size: 0.8rem;
+    margin: 6px 0 0;
+  }
+
+  .step-list {
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .step-item {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+    border-radius: 8px;
+  }
+
+  .diagram-container {
+    min-height: 240px;
+    border-radius: 10px;
+  }
+
+  .diagram-legend {
+    gap: 4px;
+    margin-top: 6px;
+  }
+
+  .legend-item {
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    gap: 4px;
+  }
+
+  .legend-swatch {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+@media (max-width: 360px) {
+  html {
+    font-size: 12px;
+  }
+
+  .app-shell {
+    width: calc(100% - 8px);
+    padding: 10px 4px 16px;
+  }
+
+  .hero h1 {
+    font-size: clamp(1rem, 5vw, 1.6rem);
+  }
+
+  .card {
+    padding: 8px;
+    border-radius: 10px;
+  }
+
+  .definition-info {
+    grid-template-columns: 1fr;
+  }
+
+  .exercise-tabs {
+    gap: 3px;
+  }
+
+  .exercise-tab {
+    padding: 5px 8px;
+    font-size: 0.75rem;
+  }
+
+  .table-wrap table {
+    min-width: 380px;
+  }
+
+  .table-wrap.compact table {
+    min-width: 300px;
+  }
+
+  .example-chips {
+    gap: 3px;
+  }
+
+  .diagram-container {
+    min-height: 200px;
   }
 }

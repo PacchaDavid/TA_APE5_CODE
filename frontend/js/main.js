@@ -105,6 +105,7 @@ async function loadExercise(exerciseId) {
   elements.exerciseTitle.textContent = exercises.find((item) => item.id === exerciseId)?.title || 'Ejercicio';
   elements.simulationStatus.textContent = 'Esperando una cadena.';
   elements.simulationResults.innerHTML = '';
+  elements.inputString.value = '';
   await Promise.all([loadDefinition(), loadTestResults()]);
 }
 
