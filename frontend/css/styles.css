@@ -493,9 +493,10 @@ input:focus {
 .diagram-container {
   min-height: 500px;
   border-radius: 18px;
-  overflow: hidden;
+  overflow: auto;
   border: 1px solid rgba(173, 191, 255, 0.12);
   background: radial-gradient(circle at center, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  -webkit-overflow-scrolling: touch;
 }
 
 .diagram-container svg {
