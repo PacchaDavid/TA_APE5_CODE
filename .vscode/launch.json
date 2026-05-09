@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-AfConversionMinimizationApplication<af_conversion_minimization>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.ta_ape5.af_conversion_minimization.AfConversionMinimizationApplication",
+            "projectName": "af_conversion_minimization",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
