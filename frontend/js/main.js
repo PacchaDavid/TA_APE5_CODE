@@ -238,6 +238,35 @@ function renderDiagram(activeStates = [], highlightState = null) {
   });
 }
 
+function parseStateSet(stateValue) {
+  if (!stateValue) {
+    return [];
+  }
+  if (stateValue === '∅') {
+    return [];
+  }
+  const trimmed = String(stateValue).trim();
+  if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+    const inner = trimmed.slice(1, -1).trim();
+    if (!inner) {
+      return [];
+    }
+    return inner.split(',').map((item) => item.trim()).filter(Boolean);
+  }
+  return [trimmed];
+}
+
+function formatStateForDisplay(automataType, stateValue) {
+  if (automataType !== 'AFND') {
+    return stateValue || '—';
+  }
+  const parts = parseStateSet(stateValue);
+  if (!parts.length) {
+    return '∅';
+  }
+  return parts.join(', ');
+}
+
 async function loadTestResults() {
   try {
     state.testRows = await getTestResults(state.exerciseId);
@@ -262,7 +291,12 @@ async function handleSimulationSubmit(event) {
     const result = await simulate(state.exerciseId, automataType, input);
     elements.simulationStatus.innerHTML = `<span class="badge ${result.accepted ? 'success' : 'danger'}">${result.accepted ? 'ACEPTA' : 'RECHAZA'}</span><span class="status-note">El color verde indica aceptación; el rojo, rechazo. Haz clic en los pasos para seguir la ruta del estado.</span>`;
     renderSimulationResultCard(automataType, result, input);
-    renderDiagram([result.finalState].filter(Boolean), result.finalState);
+    if (automataType === 'AFND') {
+      const activeStates = parseStateSet(result.finalState);
+      renderDiagram(activeStates, null);
+    } else {
+      renderDiagram([result.finalState].filter(Boolean), result.finalState);
+    }
   } catch (error) {
     elements.simulationStatus.innerHTML = `<span class="badge danger">Error</span><span class="status-note">${escapeHtml(error.message)}</span>`;
   }
@@ -277,7 +311,7 @@ function renderSimulationResultCard(automataType, result, input) {
       <h3>${escapeHtml(title)}</h3>
       <span class="badge ${result.accepted ? 'success' : 'danger'}">${result.accepted ? 'ACEPTA' : 'RECHAZA'}</span>
     </header>
-    <p class="result-state">Entrada: ${escapeHtml(input === '' ? 'ε' : input)}<br>Estado final: ${escapeHtml(result.finalState || '—')}</p>
+    <p class="result-state">Entrada: ${escapeHtml(input === '' ? 'ε' : input)}<br>Estado final: ${escapeHtml(formatStateForDisplay(automataType, result.finalState))}</p>
   `;
 
   const stepsList = document.createElement('div');
@@ -287,12 +321,18 @@ function renderSimulationResultCard(automataType, result, input) {
     const item = document.createElement('button');
     item.type = 'button';
     item.className = 'step-item';
-    item.innerHTML = `<strong>#${index + 1}</strong> ${escapeHtml(step.symbol)}: ${escapeHtml(step.fromState)} → ${escapeHtml(step.toState)}`;
+    const fromLabel = formatStateForDisplay(automataType, step.fromState);
+    const toLabel = formatStateForDisplay(automataType, step.toState);
+    item.innerHTML = `<strong>#${index + 1}</strong> ${escapeHtml(step.symbol)}: ${escapeHtml(fromLabel)} → ${escapeHtml(toLabel)}`;
     item.addEventListener('click', () => {
       const stateName = step.toState || step.fromState;
       [...stepsList.querySelectorAll('.step-item')].forEach((node) => node.classList.remove('active'));
       item.classList.add('active');
-      renderDiagram([stateName], stateName);
+      if (automataType === 'AFND') {
+        renderDiagram(parseStateSet(stateName), null);
+      } else {
+        renderDiagram([stateName], stateName);
+      }
     });
     stepsList.appendChild(item);
   });
